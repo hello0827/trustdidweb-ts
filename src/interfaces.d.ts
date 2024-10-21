@@ -1,3 +1,18 @@
+interface DIDResolutionMeta {
+  versionId: string;
+  created: string;
+  updated: string;
+  previousLogEntryHash?: string;
+  updateKeys: string[];
+  scid: string;
+  prerotation: boolean;
+  portable: boolean;
+  nextKeyHashes: string[];
+  deactivated: boolean;
+  witnesses: string[],
+  witnessThreshold: number;
+}
+
 interface DIDDoc {
   id?: string;
   controller?: string | string[];
@@ -17,20 +32,35 @@ interface DIDOperation {
   value: any;
 }
 
+interface DataIntegrityProof {
+  id?: string;
+  type: string;
+  cryptosuite: string;
+  verificationMethod: string;
+  created: string;
+  proofValue: string;
+  proofPurpose: string;
+  challenge?: string;
+}
+
 type DIDLogEntry = [
-  logEntryHash: string,
-  versionId: number,
+  versionId: string,
   timestamp: string,
   params: {
     method?: string,
     scid?: string,
     updateKeys?: string[],
-    prerotate?: boolean,
-    nextKeyHashes?: string[]
+    prerotation?: boolean,
+    nextKeyHashes?: string[],
+    portable?: boolean,
+    witnesses?: string[],
+    witnessThreshold?: number,
+    deactivated?: boolean
   },
   data: {value: any} | {patch: DIDOperation[]},
-  proof?: any
+  proof?: DataIntegrityProof[]
 ];
+
 type DIDLog = DIDLogEntry[];
 
 interface ServiceEndpoint {
@@ -57,8 +87,11 @@ interface CreateDIDInterface {
   context?: string | string[];
   verificationMethods?: VerificationMethod[];
   created?: Date;
-  prerotate?: boolean;
+  prerotation?: boolean;
   nextKeyHashes?: string[];
+  portable?: boolean;
+  witnesses?: string[];
+  witnessThreshold?: number;
 }
 
 interface SignDIDDocInterface {
@@ -77,10 +110,12 @@ interface UpdateDIDInterface {
   services?: ServiceEndpoint[];
   alsoKnownAs?: string[];
   domain?: string;
-  updated?: Date;
+  updated?: Date | string;
   deactivated?: boolean;
-  prerotate?: boolean;
+  prerotation?: boolean;
   nextKeyHashes?: string[];
+  witnesses?: string[];
+  witnessThreshold?: number;
 }
 
 interface DeactivateDIDInterface {
