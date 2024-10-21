@@ -1,6 +1,9 @@
+.env
 test/logs
 .DS_Store
 .vscode
 node_modules
 bun.lockb
 lib
+claude_chats
+*.jsonl
