@@ -4,6 +4,5 @@ test/logs
 .vscode
 node_modules
 bun.lockb
-lib
 claude_chats
 *.jsonl
