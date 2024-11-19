@@ -3,25 +3,26 @@
   "module": "src/index.ts",
   "type": "module",
   "scripts": {
+    "dev": "bun --watch --inspect-wait ./src/resolver.ts",
     "server": "bun --watch ./src/resolver.ts",
     "test": "bun test",
-    "test:watch": "bun test --watch",
-    "test:bail": "bun test --watch --bail",
+    "compile": "tsc && tsc-alias",
+    "test:watch": "bun test --watch witness",
+    "test:bail": "bun test --watch --bail --verbose",
     "test:log": "mkdir -p ./test/logs && LOG_RESOLVES=true bun test &> ./test/logs/test-run.txt",
-    "compile": "tsc && tsc-alias"
+    "cli": "bun run src/cli.ts"
   },
   "devDependencies": {
-    "bun-types": "latest",
-    "ts-node": "^10.9.2",
-    "tsx": "^4.7.1"
+    "bun-bagel": "^1.1.0",
+    "bun-types": "latest"
   },
   "peerDependencies": {
     "typescript": "^5.0.0"
   },
   "dependencies": {
-    "@digitalbazaar/ed25519-multikey": "^1.1.0",
+    "@interop/base58-universal": "^1.0.0",
+    "@noble/curves": "^1.4.2",
     "@noble/ed25519": "^2.1.0",
-    "base32": "^0.0.7",
     "elysia": "^0.8.17",
     "fast-json-patch": "^3.1.1",
     "json-canonicalize": "^1.0.6",

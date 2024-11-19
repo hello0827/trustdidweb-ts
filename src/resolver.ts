@@ -1,24 +1,30 @@
 import { Elysia } from 'elysia'
-import { getLatestDIDDoc } from './routes/did';
-
-const getMaxVersionId = (max: number, name: string) => {
-  const pattern = /\d+(?=.json)/;
-  const match = name.match(pattern);
-  if (match) {
-    const num = parseInt(match[0], 10);
-    return Math.max(max, num);
-  }
-  return max;
-}
+import { getLatestDIDDoc, getLogFileForBase, getLogFileForSCID } from './routes/did';
+import { createWitnessProof } from './witness';
 
 const app = new Elysia()
-	.get('/:id', ({params, set}) => getLatestDIDDoc({params, set}))
-  .get('/:id/:version', ({params: {id, version}}) => {
-    console.log(version)
+  .get('/health', 'ok')
+  .get('/.well-known/did.jsonl', () => getLogFileForBase())
+  .post('/witness', async ({body}) => {
+    const result = await createWitnessProof((body as any).log);
+    console.log(`Signed with VM`, (result as any).proof.verificationMethod)
+    if ('error' in result) {
+      return { error: result.error };
+    }
+    return { proof: result.proof };
   })
-  .get('/:id/versions', ({params: {id}}) => {
-    console.log('versions')
-  })
+  .group('/:id', app => {
+    return app
+      .get('/did.jsonl', ({params}) => getLogFileForSCID({params: {scid: params.id}}))
+      .get('/:version', ({params: {id, version}}) => {
+        console.log(version)
+      })
+      .get('/versions', ({params: {id}}) => {
+        console.log('versions')
+      })
+      .get('/', ({params}) => getLatestDIDDoc({params}))
+    })
 	.listen(8000)
+
 
 console.log(`🔍 Resolver is running at on port ${app.server?.port}...`)
